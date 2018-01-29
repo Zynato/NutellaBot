@@ -42,6 +42,11 @@ namespace DiscordBot
             }
         }
 
+        private async Task Client_MessageReceived(SocketMessage message) { 
+            if (message.Content == "!Picka") {
+                await message.Channel.SendMessageAsync("Picka!");
+            }
+        }
         private IConfiguration BuildConfiguration() {
             var builder = new ConfigurationBuilder()
                               .SetBasePath(Directory.GetCurrentDirectory())
