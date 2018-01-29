@@ -46,6 +46,10 @@ namespace DiscordBot
             {
                 await message.Channel.SendMessageAsync("Picka!");
             }
+            else if (message.Content == "!Creator?")
+            {
+                await message.Channel.SendMessageAsync("ZYN!");
+            }
         }
         private IConfiguration BuildConfiguration() {
             var builder = new ConfigurationBuilder()
