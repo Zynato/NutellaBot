@@ -36,14 +36,14 @@ namespace DiscordBot
             await Task.Delay(-1);
         }
 
-        private async Task Client_MessageReceived(SocketMessage message) {
-            if (message.Content == "!nutella") {
+        private async Task Client_MessageReceived(SocketMessage message)
+        {
+            if (message.Content == "!nutella")
+            {
                 await message.Channel.SendMessageAsync("Nutella!");
             }
-        }
-
-        private async Task Client_MessageReceived(SocketMessage message) { 
-            if (message.Content == "!Picka") {
+            else if (message.Content == "!Picka")
+            {
                 await message.Channel.SendMessageAsync("Picka!");
             }
         }
