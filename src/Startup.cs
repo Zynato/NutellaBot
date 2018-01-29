@@ -42,9 +42,9 @@ namespace DiscordBot
             {
                 await message.Channel.SendMessageAsync("Nutella!");
             }
-            else if (message.Content == "!Picka")
+            else if (message.Content == "!Pika")
             {
-                await message.Channel.SendMessageAsync("Picka!");
+                await message.Channel.SendMessageAsync("Pika!");
             }
             else if (message.Content == "!Creator?")
             {
