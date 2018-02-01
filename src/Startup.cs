@@ -50,6 +50,18 @@ namespace DiscordBot
             {
                 await message.Channel.SendMessageAsync("ZYN!");
             }
+            else if (message.Content == "!Daro")
+            {
+                await message.Channel.SendMessageAsync("Einstein V2 and a good helper");
+            }
+            else if (message.Content == "!Solid")
+            {
+                await message.Channel.SendMessageAsync("Good Helper");
+            }
+            else if (message.Content == "!Demi")
+            {
+                await message.Channel.SendMessageAsync("A Noob");
+            }
         }
         private IConfiguration BuildConfiguration() {
             var builder = new ConfigurationBuilder()
