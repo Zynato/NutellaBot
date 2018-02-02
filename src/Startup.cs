@@ -1,8 +1,11 @@
-﻿using Discord.WebSocket;
+﻿using Discord.Commands;
+using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,8 +14,10 @@ namespace DiscordBot
     class Startup
     {
         IConfiguration configuration;
+        IServiceProvider services;
 
         DiscordSocketClient client;
+        CommandService commands;
 
         public Startup() {
             this.configuration = BuildConfiguration();
@@ -20,6 +25,7 @@ namespace DiscordBot
 
         public async Task RunAsync() {
             client = new DiscordSocketClient();
+            commands = new CommandService();
 
             var token = this.configuration.GetSection("Discord")["Token"];
 
@@ -28,7 +34,13 @@ namespace DiscordBot
                 return;
             }
 
+            services = new ServiceCollection()
+                           .AddSingleton(client)
+                           .AddSingleton(commands)
+                           .BuildServiceProvider();
+
             client.MessageReceived += Client_MessageReceived;
+            await commands.AddModulesAsync(Assembly.GetEntryAssembly());
 
             await client.LoginAsync(Discord.TokenType.Bot, token);
             await client.StartAsync();
@@ -36,33 +48,23 @@ namespace DiscordBot
             await Task.Delay(-1);
         }
 
-        private async Task Client_MessageReceived(SocketMessage message)
-        {
-            if (message.Content == "!nutella")
-            {
-                await message.Channel.SendMessageAsync("Nutella!");
+        private async Task Client_MessageReceived(SocketMessage e) {
+            // https://discord.foxbot.me/docs/guides/commands/commands.html
+            var message = e as SocketUserMessage;
+            if (message == null) {
+                return;
             }
-            else if (message.Content == "!Pika")
-            {
-                await message.Channel.SendMessageAsync("Pika!");
+            int argPos = 0;
+            if (!(message.HasCharPrefix('!', ref argPos) || message.HasMentionPrefix(client.CurrentUser, ref argPos))) {
+                return;
             }
-            else if (message.Content == "!Creator?")
-            {
-                await message.Channel.SendMessageAsync("ZYN!");
-            }
-            else if (message.Content == "!Daro")
-            {
-                await message.Channel.SendMessageAsync("Einstein V2 and a good helper");
-            }
-            else if (message.Content == "!Solid")
-            {
-                await message.Channel.SendMessageAsync("Good Helper");
-            }
-            else if (message.Content == "!Demi")
-            {
-                await message.Channel.SendMessageAsync("A Noob");
+            var context = new SocketCommandContext(client, message);
+            var result = await commands.ExecuteAsync(context, argPos, services);
+            if (!result.IsSuccess) {
+                await context.Channel.SendMessageAsync(result.ErrorReason);
             }
         }
+
         private IConfiguration BuildConfiguration() {
             var builder = new ConfigurationBuilder()
                               .SetBasePath(Directory.GetCurrentDirectory())
