@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using DiscordBot.Database;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -34,16 +35,25 @@ namespace DiscordBot
                 return;
             }
 
-            services = new ServiceCollection()
-                           .AddSingleton(client)
-                           .AddSingleton(commands)
-                           .BuildServiceProvider();
+            var debug = Convert.ToBoolean(this.configuration.GetSection("Discord")["Debug"]);
+
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton(client);
+            serviceCollection.AddSingleton(commands);
+
+            if (debug) {
+                serviceCollection.AddSingleton<IVariableStorage>(new InMemoryVariableStorage());
+            }
+
+            services = serviceCollection.BuildServiceProvider();
 
             client.MessageReceived += Client_MessageReceived;
             await commands.AddModulesAsync(Assembly.GetEntryAssembly());
 
             await client.LoginAsync(Discord.TokenType.Bot, token);
             await client.StartAsync();
+
+            Console.WriteLine("Bot loaded and waiting.");
 
             await Task.Delay(-1);
         }

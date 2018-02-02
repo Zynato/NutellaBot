@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using DiscordBot.Database;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +10,48 @@ namespace DiscordBot.Commands
 {
     public class SimpleResponses : ModuleBase<SocketCommandContext>
     {
+        public IVariableStorage Variables { get; set; }
+
+        [Command("count")]
+        [Summary("Increments a counter by 1")]
+        public async Task CountAsync() {
+            var maybeCount = Variables.GetUserVariable(Context.User.Id, "count");
+
+            int count = 0;
+            if (maybeCount.HasValue) {
+                count = Convert.ToInt32(maybeCount.Value);
+            }
+
+            count++;
+
+            await Context.Channel.SendMessageAsync($"Counter is now at {count}");
+
+            Variables.SetUserVariable(Context.User.Id, "count", count.ToString());
+        }
+
+        [Command("globalcount")]
+        [Summary("Increments the global counter by 1")]
+        public async Task GlobalCountAsync() {
+            var maybeCount = Variables.GetGlobalVariable("count");
+
+            int count = 0;
+            if (maybeCount.HasValue) {
+                count = Convert.ToInt32(maybeCount.Value);
+            }
+
+            count++;
+
+            await Context.Channel.SendMessageAsync($"Global counter is now at {count}");
+
+            Variables.SetGlobalVariable("count", count.ToString());
+        }
+
+        [Command("whoami")]
+        [Summary("Reponds with the senders username")]
+        public async Task WhoAmIAsync() {
+            await Context.Channel.SendMessageAsync($"You are {Context.User.Username}:{Context.User.Id}");
+        }
+
         [Command("nutella")]
         [Summary("Responds with nutella")]
         public async Task NutellaAsync() {
