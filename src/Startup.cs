@@ -40,6 +40,7 @@ namespace DiscordBot
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton(client);
             serviceCollection.AddSingleton(commands);
+            serviceCollection.AddSingleton(new Random());
 
             if (debug) {
                 serviceCollection.AddSingleton<IVariableStorage>(new InMemoryVariableStorage());
