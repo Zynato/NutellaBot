@@ -37,6 +37,8 @@ namespace DiscordBot.Commands.Games
                 }
             }
 
+            Console.WriteLine($"The selected word is {word}");
+
             // Start playing a new game
             Variables.SetGlobalVariable("hm-playing", true);
             Variables.SetGlobalVariable("hm-word", word);
