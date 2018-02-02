@@ -31,7 +31,7 @@ namespace DiscordBot.Commands.Games
             var assembly = Assembly.GetExecutingAssembly();
             using (var stream = assembly.GetManifestResourceStream("DiscordBot.Resources.HangmanWordList.txt")) {
                 using (var reader = new StreamReader(stream)) {
-                    var wordList = reader.ReadToEnd().Split("\r\n");
+                    var wordList = reader.ReadToEnd().Replace("\r", "").Split("\n");
 
                     word = wordList[Random.Next(0, wordList.Length)].ToLower();
                 }
