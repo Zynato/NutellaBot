@@ -104,5 +104,17 @@ namespace DiscordBot.Commands
         public async Task DemiAsync() {
             await ReplyAsync("A Noob");
         }
+
+        [Command("alextoi")]
+        [Summary("Who is alextoi?")]
+        public async Task AlexToIAsync() {
+            await ReplyAsync("hm don't know xD");
+        }
+
+        [Command("link")]
+        [Summary("Who is Link?")]
+        public async Task LinkAsync() {
+            await ReplyAsync("Bitcoin millionaire!!!");
+        }
     }
 }
