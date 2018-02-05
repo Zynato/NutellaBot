@@ -97,6 +97,7 @@ namespace DiscordBot.Commands
         [Summary("Who is Solid?")]
         public async Task SolidAsync() {
             await ReplyAsync("Good Helper");
+            await ReplyAsync("**You're pretty good** - Big Boss");
         }
 
         [Command("demi")]
@@ -105,7 +106,7 @@ namespace DiscordBot.Commands
             await ReplyAsync("A Noob");
         }
 
-        [Command("alextoi")]
+        [Command("alextoti")]
         [Summary("Who is alextoti?")]
         public async Task AlexTotiAsync() {
             await ReplyAsync("hm don't know xD");
@@ -114,18 +115,14 @@ namespace DiscordBot.Commands
         [Command("link")]
         [Summary("Who is Link?")]
         public async Task LinkAsync() {
-            await ReplyAsync("Bitcoin millionaire!!!");
+            await ReplyAsync("Bitco(nnect)in millionaire!!!");
         }
 
         [Command("bitconnect")]
         [Summary("Wassa wassaa wassuuuuppp!")]
         public async Task BitconnectAsync() {
             await ReplyAsync("Wassa wassaa wassuuuuppp!");
-
-            var embed = new EmbedBuilder()
-                            .WithUrl("https://www.youtube.com/watch?v=61i2iDz7u04");
-
-            await Context.Channel.SendMessageAsync("", embed: embed);
+            await ReplyAsync("https://www.youtube.com/watch?v=61i2iDz7u04");
         }
     }
 }
