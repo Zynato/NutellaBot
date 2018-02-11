@@ -115,7 +115,9 @@ namespace DiscordBot
         private IConfiguration BuildConfiguration() {
             var builder = new ConfigurationBuilder()
                               .SetBasePath(Directory.GetCurrentDirectory())
-                              .AddJsonFile("appsettings.json", optional: true);
+#if DEBUG
+                              .AddJsonFile("appsettings.debug.json", optional: true);
+#endif
             builder.AddEnvironmentVariables();
 
             return builder.Build();
