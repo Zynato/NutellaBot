@@ -12,52 +12,58 @@ namespace DiscordBot.Commands
     {
         public IVariableStorage Variables { get; set; }
 
+        [Command("server")]
+        [Summary("Get server details")]
+        public async Task ServerAsync() {
+            await Context.Channel.SendMessageAsync($"Server id: {Context.Guild.Id}\nServer owner: {Context.Guild.OwnerId}\nCurrent channel id: {Context.Channel.Id}");
+        }
+
         [Command("count")]
         [Summary("Increments a counter by 1")]
         public async Task CountAsync() {
-            var count = Variables.GetUserVariableAsInt32(Context.User.Id, "count");
+            var count = Variables.GetUserVariableAsInt32(Context.Guild.Id, Context.User.Id, "count");
 
             count++;
 
             await Context.Channel.SendMessageAsync($"Counter is now at {count}");
 
-            Variables.SetUserVariable(Context.User.Id, "count", count);
+            Variables.SetUserVariable(Context.Guild.Id, Context.User.Id, "count", count);
         }
 
         [Command("countdown")]
         [Summary("Decrements a counter by 1")]
         public async Task CountdownAsync() {
-            var count = Variables.GetUserVariableAsInt32(Context.User.Id, "count");
+            var count = Variables.GetUserVariableAsInt32(Context.Guild.Id, Context.User.Id, "count");
 
             count--;
 
             await Context.Channel.SendMessageAsync($"Counter is now at {count}");
 
-            Variables.SetUserVariable(Context.User.Id, "count", count);
+            Variables.SetUserVariable(Context.Guild.Id, Context.User.Id, "count", count);
         }
 
         [Command("globalcount")]
         [Summary("Increments the global counter by 1")]
         public async Task GlobalCountAsync() {
-            var count = Variables.GetGlobalVariableAsInt32("count");
+            var count = Variables.GetGlobalVariableAsInt32(Context.Guild.Id, "count");
 
             count++;
 
             await Context.Channel.SendMessageAsync($"Global counter is now at {count}");
 
-            Variables.SetGlobalVariable("count", count.ToString());
+            Variables.SetGlobalVariable(Context.Guild.Id, "count", count.ToString());
         }
 
         [Command("globalcountdown")]
         [Summary("Decrements the global counter by 1")]
         public async Task GlobalCountdownAsync() {
-            var count = Variables.GetGlobalVariableAsInt32("count");
+            var count = Variables.GetGlobalVariableAsInt32(Context.Guild.Id, "count");
 
             count--;
 
             await Context.Channel.SendMessageAsync($"Global counter is now at {count}");
 
-            Variables.SetGlobalVariable("count", count.ToString());
+            Variables.SetGlobalVariable(Context.Guild.Id, "count", count.ToString());
         }
 
         [Command("whoami")]

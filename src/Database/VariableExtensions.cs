@@ -6,36 +6,36 @@ namespace DiscordBot.Database
 {
     public static class VariableExtensions
     {
-        public static int GetUserVariableAsInt32(this IVariableStorage variables, ulong userId, string variable) {
-            return CastMaybeStringToInt(variables.GetUserVariable(userId, variable));
+        public static int GetUserVariableAsInt32(this IVariableStorage variables, ulong guildId,  ulong userId, string variable) {
+            return CastMaybeStringToInt(variables.GetUserVariable(guildId, userId, variable));
         }
 
-        public static void SetUserVariable(this IVariableStorage variables, ulong userId, string variable, int value) {
-            variables.SetUserVariable(userId, variable, value.ToString());
+        public static void SetUserVariable(this IVariableStorage variables, ulong guildId, ulong userId, string variable, int value) {
+            variables.SetUserVariable(guildId, userId, variable, value.ToString());
         }
 
-        public static int GetGlobalVariableAsInt32(this IVariableStorage variables, string variable) {
-            return CastMaybeStringToInt(variables.GetGlobalVariable(variable));
+        public static int GetGlobalVariableAsInt32(this IVariableStorage variables, ulong guildId, string variable) {
+            return CastMaybeStringToInt(variables.GetGlobalVariable(guildId, variable));
         }
 
-        public static void SetGlobalVariable(this IVariableStorage variables, string variable, int value) {
-            variables.SetGlobalVariable(variable, value.ToString());
+        public static void SetGlobalVariable(this IVariableStorage variables, ulong guildId, string variable, int value) {
+            variables.SetGlobalVariable(guildId, variable, value.ToString());
         }
 
-        public static bool GetUserVariableAsBoolean(this IVariableStorage variables, ulong userId, string variable) {
-            return CastMaybeStringToBoolean(variables.GetUserVariable(userId, variable));
+        public static bool GetUserVariableAsBoolean(this IVariableStorage variables, ulong guildId, ulong userId, string variable) {
+            return CastMaybeStringToBoolean(variables.GetUserVariable(guildId, userId, variable));
         }
 
-        public static void SetUserVariable(this IVariableStorage variables, ulong userId, string variable, bool value) {
-            variables.SetUserVariable(userId, variable, value.ToString());
+        public static void SetUserVariable(this IVariableStorage variables, ulong guildId, ulong userId, string variable, bool value) {
+            variables.SetUserVariable(guildId, userId, variable, value.ToString());
         }
 
-        public static bool GetGlobalVariableAsBoolean(this IVariableStorage variables, string variable) {
-            return CastMaybeStringToBoolean(variables.GetGlobalVariable(variable));
+        public static bool GetGlobalVariableAsBoolean(this IVariableStorage variables, ulong guildId, string variable) {
+            return CastMaybeStringToBoolean(variables.GetGlobalVariable(guildId, variable));
         }
 
-        public static void SetGlobalVariable(this IVariableStorage variables, string variable, bool value) {
-            variables.SetGlobalVariable(variable, value.ToString());
+        public static void SetGlobalVariable(this IVariableStorage variables, ulong guildId, string variable, bool value) {
+            variables.SetGlobalVariable(guildId, variable, value.ToString());
         }
 
         private static int CastMaybeStringToInt(Maybe<string> maybeValue) {

@@ -19,7 +19,7 @@ namespace DiscordBot.Commands.Games
         [Command("play")]
         [Summary("Start playing a new game of hangman")]
         public async Task PlayAsync() {
-            var isPlaying = Variables.GetGlobalVariableAsBoolean("hm-playing");
+            var isPlaying = Variables.GetGlobalVariableAsBoolean(Context.Guild.Id, "hm-playing");
 
             if (isPlaying) {
                 await Context.Channel.SendMessageAsync("A game is already in progress!");
@@ -40,8 +40,8 @@ namespace DiscordBot.Commands.Games
             Console.WriteLine($"The selected word is {word}");
 
             // Start playing a new game
-            Variables.SetGlobalVariable("hm-playing", true);
-            Variables.SetGlobalVariable("hm-word", word);
+            Variables.SetGlobalVariable(Context.Guild.Id, "hm-playing", true);
+            Variables.SetGlobalVariable(Context.Guild.Id, "hm-word", word);
 
             await Context.Channel.SendMessageAsync("A new game of hangman has been started!");
             await PrintGameState();
@@ -50,7 +50,7 @@ namespace DiscordBot.Commands.Games
         [Command("stop")]
         [Summary("Stop playing a game in progress")]
         public async Task StopAsync() {
-            var isPlaying = Variables.GetGlobalVariableAsBoolean("hm-playing");
+            var isPlaying = Variables.GetGlobalVariableAsBoolean(Context.Guild.Id, "hm-playing");
 
             if (!isPlaying) {
                 await Context.Channel.SendMessageAsync("There aren't any games currently in progress");
@@ -65,7 +65,7 @@ namespace DiscordBot.Commands.Games
         [Command("state")]
         [Summary("Print the current game state")]
         public async Task StateAsync() {
-            var isPlaying = Variables.GetGlobalVariableAsBoolean("hm-playing");
+            var isPlaying = Variables.GetGlobalVariableAsBoolean(Context.Guild.Id, "hm-playing");
 
             if (!isPlaying) {
                 await Context.Channel.SendMessageAsync("There aren't any games currently in progress");
@@ -78,14 +78,14 @@ namespace DiscordBot.Commands.Games
         [Command("guess")]
         [Summary("Guess a letter in the word")]
         public async Task GuessAsync([Summary("The letter to guess")] char letter) {
-            var isPlaying = Variables.GetGlobalVariableAsBoolean("hm-playing");
+            var isPlaying = Variables.GetGlobalVariableAsBoolean(Context.Guild.Id, "hm-playing");
 
             if (!isPlaying) {
                 await Context.Channel.SendMessageAsync("There aren't any games currently in progress");
                 return;
             }
 
-            var maybeWord = Variables.GetGlobalVariable("hm-word");
+            var maybeWord = Variables.GetGlobalVariable(Context.Guild.Id, "hm-word");
 
             string word;
             if (!maybeWord.HasValue) {
@@ -96,8 +96,8 @@ namespace DiscordBot.Commands.Games
 
             var normalizedGuess = letter.ToString().ToLower();
 
-            var guesses = Variables.GetGlobalVariable("hm-guesses").Value ?? "";
-            var guessCount = Variables.GetGlobalVariableAsInt32("hm-guess-count");
+            var guesses = Variables.GetGlobalVariable(Context.Guild.Id, "hm-guesses").Value ?? "";
+            var guessCount = Variables.GetGlobalVariableAsInt32(Context.Guild.Id, "hm-guess-count");
 
             if (guesses.Contains(normalizedGuess)) {
                 await Context.Channel.SendMessageAsync("That letter has already been guessed.");
@@ -105,11 +105,11 @@ namespace DiscordBot.Commands.Games
                 if (!word.Contains(normalizedGuess)) {
                     guessCount++;
 
-                    Variables.SetGlobalVariable("hm-guess-count", guessCount);
+                    Variables.SetGlobalVariable(Context.Guild.Id, "hm-guess-count", guessCount);
                 }
 
                 guesses += letter.ToString().ToLower();
-                Variables.SetGlobalVariable("hm-guesses", guesses);
+                Variables.SetGlobalVariable(Context.Guild.Id, "hm-guesses", guesses);
             }
 
             await PrintGameState();
@@ -143,14 +143,14 @@ namespace DiscordBot.Commands.Games
         }
 
         private void ResetGameState() {
-            Variables.SetGlobalVariable("hm-playing", false);
-            Variables.SetGlobalVariable("hm-word", "");
-            Variables.SetGlobalVariable("hm-guess-count", 0);
-            Variables.SetGlobalVariable("hm-guesses", "");
+            Variables.SetGlobalVariable(Context.Guild.Id, "hm-playing", false);
+            Variables.SetGlobalVariable(Context.Guild.Id, "hm-word", "");
+            Variables.SetGlobalVariable(Context.Guild.Id, "hm-guess-count", 0);
+            Variables.SetGlobalVariable(Context.Guild.Id, "hm-guesses", "");
         }
 
         private async Task PrintGameState() {
-            var maybeWord = Variables.GetGlobalVariable("hm-word");
+            var maybeWord = Variables.GetGlobalVariable(Context.Guild.Id, "hm-word");
 
             string word;
             if (!maybeWord.HasValue) {
@@ -159,7 +159,7 @@ namespace DiscordBot.Commands.Games
 
             word = maybeWord.Value;
 
-            var guessCount = Variables.GetGlobalVariableAsInt32("hm-guess-count");
+            var guessCount = Variables.GetGlobalVariableAsInt32(Context.Guild.Id, "hm-guess-count");
 
             var hangmanStateBuilder = new StringBuilder();
 
@@ -203,7 +203,7 @@ namespace DiscordBot.Commands.Games
                 hangmanStateBuilder.AppendLine("|              ");
             }
 
-            var guesses = Variables.GetGlobalVariable("hm-guesses").Value ?? "";
+            var guesses = Variables.GetGlobalVariable(Context.Guild.Id, "hm-guesses").Value ?? "";
 
             hangmanStateBuilder.Append("| ");
             for (var i = 0; i < word.Length; i++) {

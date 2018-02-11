@@ -6,10 +6,10 @@ namespace DiscordBot.Database
 {
     public interface IVariableStorage
     {
-        Maybe<string> GetUserVariable(ulong userId, string variable);
-        void SetUserVariable(ulong userId, string variable, string value);
+        Maybe<string> GetUserVariable(ulong guildId, ulong userId, string variable);
+        void SetUserVariable(ulong guildId, ulong userId, string variable, string value);
 
-        Maybe<string> GetGlobalVariable(string variable);
-        void SetGlobalVariable(string variable, string value);
+        Maybe<string> GetGlobalVariable(ulong guildId, string variable);
+        void SetGlobalVariable(ulong guildId, string variable, string value);
     }
 }
