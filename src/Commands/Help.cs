@@ -40,7 +40,9 @@ namespace DiscordBot.Commands
                             helpBuilder.Append(' ');
                             helpBuilder.AppendJoin(" ", command.Parameters.Select(x => $"[{x.Name}]"));
                         }
-                        helpBuilder.Append($" - {command.Summary}");
+                        if (!string.IsNullOrEmpty(command.Summary)) {
+                            helpBuilder.Append($" - {command.Summary}");
+                        }
                         helpBuilder.AppendLine();
                     }
                 }
