@@ -39,20 +39,27 @@ namespace DiscordBot
                 return;
             }
 
-            var debug = Convert.ToBoolean(this.configuration.GetSection("Discord")["Debug"]);
-
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton(client);
             serviceCollection.AddSingleton(commands);
             serviceCollection.AddSingleton(new Random());
 
-            if (debug) {
-                serviceCollection.AddSingleton<IVariableStorage>(new InMemoryVariableStorage());
-            }
-
             var extensionInitialiationParameters = new ExtensionInitializationParameters(client, serviceCollection, configuration);
             foreach (var extension in Extensions) {
                 await extension.Initialize(extensionInitialiationParameters);
+            }
+
+            var hasVariableStorage = false;
+            foreach (var serviceDescriptor in serviceCollection) {
+                if (serviceDescriptor.ServiceType.IsAssignableFrom(typeof(IVariableStorage))) {
+                    hasVariableStorage = true;
+                    break;
+                }
+            }
+
+            // Add the default variable storage provider if one has not already been added
+            if (!hasVariableStorage) {
+                serviceCollection.AddSingleton<IVariableStorage>(new InMemoryVariableStorage());
             }
 
             services = serviceCollection.BuildServiceProvider();
