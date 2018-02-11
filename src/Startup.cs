@@ -116,8 +116,9 @@ namespace DiscordBot
             var builder = new ConfigurationBuilder()
                               .SetBasePath(Directory.GetCurrentDirectory())
 #if DEBUG
-                              .AddJsonFile("appsettings.debug.json", optional: true);
+                              .AddJsonFile("appsettings.debug.json", optional: true)
 #endif
+                              ; // This needs to be here when DEBUG is not defined
             builder.AddEnvironmentVariables();
 
             return builder.Build();
