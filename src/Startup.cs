@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Database;
+using DiscordBot.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace DiscordBot
 {
-    class Startup
+    public class Startup
     {
         IConfiguration configuration;
         IServiceProvider services;
@@ -20,8 +21,11 @@ namespace DiscordBot
         DiscordSocketClient client;
         CommandService commands;
 
+        public List<IExtension> Extensions { get; }
+
         public Startup() {
             this.configuration = BuildConfiguration();
+            this.Extensions = new List<IExtension>();
         }
 
         public async Task RunAsync() {
@@ -46,10 +50,19 @@ namespace DiscordBot
                 serviceCollection.AddSingleton<IVariableStorage>(new InMemoryVariableStorage());
             }
 
+            var extensionInitialiationParameters = new ExtensionInitializationParameters(client, serviceCollection, configuration);
+            foreach (var extension in Extensions) {
+                await extension.Initialize(extensionInitialiationParameters);
+            }
+
             services = serviceCollection.BuildServiceProvider();
 
             client.MessageReceived += Client_MessageReceived;
-            await commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await commands.AddModulesAsync(Assembly.GetExecutingAssembly());
+
+            foreach (var extension in Extensions) {
+                await commands.AddModulesAsync(extension.ExtensionAssembly);
+            }
 
             await client.LoginAsync(Discord.TokenType.Bot, token);
             await client.StartAsync();
