@@ -11,6 +11,7 @@ namespace DiscordBot.Commands
     public class SimpleResponses : ModuleBase<SocketCommandContext>
     {
         public IVariableStorage Variables { get; set; }
+        public Random Random { get; set; }
 
         [Command("server")]
         [Summary("Get server details")]
@@ -127,8 +128,29 @@ namespace DiscordBot.Commands
         [Command("bitconnect")]
         [Summary("Wassa wassaa wassuuuuppp!")]
         public async Task BitconnectAsync() {
-            await ReplyAsync("Wassa wassaa wassuuuuppp!");
-            await ReplyAsync("https://www.youtube.com/watch?v=61i2iDz7u04");
+            var result = Random.Next(0, 4);
+            switch (result) {
+                case 0: {
+                        await ReplyAsync("Heey heeey heeeeyyyyy");
+                        await ReplyAsync("https://www.youtube.com/watch?v=61i2iDz7u04");
+                    }
+                    break;
+                case 1: {
+                        await ReplyAsync("Wassa wassaa wassuuuuppp!");
+                        await ReplyAsync("https://youtu.be/vhyAREaWfyU?t=31s");
+                    }
+                    break;
+                case 2: {
+                        await ReplyAsync("WWOOOAAAHHH IT'S AMAZINGGG!!!");
+                        await ReplyAsync("https://www.youtube.com/watch?v=hXRhIXp4idM");
+                    }
+                    break;
+                case 3: {
+                        await ReplyAsync("Bitconnect is in the world around me!!");
+                        await ReplyAsync("https://www.youtube.com/watch?v=SerREQ93g_I");
+                    }
+                    break;
+            }
         }
     }
 }
