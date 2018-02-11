@@ -44,6 +44,8 @@ namespace DiscordBot
             serviceCollection.AddSingleton(commands);
             serviceCollection.AddSingleton(new Random());
 
+            serviceCollection.AddSingleton(LoadGuildMappings(configuration));
+
             var extensionInitialiationParameters = new ExtensionInitializationParameters(client, serviceCollection, configuration);
             foreach (var extension in Extensions) {
                 await extension.Initialize(extensionInitialiationParameters);
@@ -77,6 +79,20 @@ namespace DiscordBot
             Console.WriteLine("Bot loaded and waiting.");
 
             await Task.Delay(-1);
+        }
+
+        private GuildMappingCollection LoadGuildMappings(IConfiguration configuration) {
+            var guildMappings = new GuildMappingCollection();
+            var section = configuration.GetSection("Discord").GetSection("Guilds");
+
+            foreach (var item in section.GetChildren()) {
+                var guildName = item.Key;
+                var guildId = item.Value;
+
+                guildMappings.Add(new GuildMapping(guildName, ulong.Parse(guildId)));
+            }
+
+            return guildMappings;
         }
 
         private async Task Client_MessageReceived(SocketMessage e) {
