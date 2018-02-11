@@ -27,24 +27,29 @@ namespace DiscordBot.Commands
             foreach (var module in Commands.Modules) {
                 var moduleAlias = module.Aliases.First();
                 
-                helpBuilder.AppendLine();
+                var commandsBuilder = new StringBuilder();
                 foreach (var command in module.Commands) {
                     var result = await command.CheckPreconditionsAsync(Context, ServiceProvider);
                     if (result.IsSuccess) {
-                        helpBuilder.Append("!"); // TODO: Don't hardcode the command prefix
+                        commandsBuilder.Append("!"); // TODO: Don't hardcode the command prefix
                         if (!string.IsNullOrEmpty(moduleAlias)) {
-                            helpBuilder.Append($"{moduleAlias} ");
+                            commandsBuilder.Append($"{moduleAlias} ");
                         }
-                        helpBuilder.Append($"{command.Name}");
+                        commandsBuilder.Append($"{command.Name}");
                         if (command.Parameters.Count > 0) {
-                            helpBuilder.Append(' ');
-                            helpBuilder.AppendJoin(" ", command.Parameters.Select(x => $"[{x.Name}]"));
+                            commandsBuilder.Append(' ');
+                            commandsBuilder.AppendJoin(" ", command.Parameters.Select(x => $"[{x.Name}]"));
                         }
                         if (!string.IsNullOrEmpty(command.Summary)) {
-                            helpBuilder.Append($" - {command.Summary}");
+                            commandsBuilder.Append($" - {command.Summary}");
                         }
-                        helpBuilder.AppendLine();
+                        commandsBuilder.AppendLine();
                     }
+                }
+
+                if (commandsBuilder.Length > 0) {
+                    helpBuilder.AppendLine();
+                    helpBuilder.Append(commandsBuilder.ToString());
                 }
             }
 
