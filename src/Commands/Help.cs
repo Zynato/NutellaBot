@@ -11,6 +11,11 @@ namespace DiscordBot.Commands
     public class Help : ModuleBase<SocketCommandContext>
     {
         public CommandService Commands { get; set; }
+        public IServiceProvider ServiceProvider { get; set; }
+
+        public Help(IServiceProvider serviceProvider) {
+            this.ServiceProvider = serviceProvider;
+        }
 
         [Command("help")]
         [Summary("Print help information")]
@@ -24,7 +29,7 @@ namespace DiscordBot.Commands
                 
                 helpBuilder.AppendLine();
                 foreach (var command in module.Commands) {
-                    var result = await command.CheckPreconditionsAsync(Context);
+                    var result = await command.CheckPreconditionsAsync(Context, ServiceProvider);
                     if (result.IsSuccess) {
                         helpBuilder.Append("!"); // TODO: Don't hardcode the command prefix
                         if (!string.IsNullOrEmpty(moduleAlias)) {
