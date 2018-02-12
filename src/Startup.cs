@@ -73,6 +73,10 @@ namespace DiscordBot
                 await commands.AddModulesAsync(extension.ExtensionAssembly);
             }
 
+            foreach (var extension in Extensions) {
+                await extension.Startup(services);
+            }
+
             await client.LoginAsync(Discord.TokenType.Bot, token);
             await client.StartAsync();
 

@@ -11,5 +11,6 @@ namespace DiscordBot.Extensions
         Assembly ExtensionAssembly { get; }
 
         Task Initialize(ExtensionInitializationParameters parameters);
+        Task Startup(IServiceProvider services);
     }
 }
