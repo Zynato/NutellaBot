@@ -9,6 +9,8 @@ namespace DiscordBot.Database
         public string Name { get; }
         public Maybe<string> Value { get; set; }
 
+        public object State { get; set; }
+
         public Variable(string name) {
             this.Name = name;
         }
