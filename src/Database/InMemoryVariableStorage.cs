@@ -17,7 +17,7 @@ namespace DiscordBot.Database
             this.globalVariables = new Dictionary<ulong, Dictionary<string, string>>();
         }
 
-        public Maybe<string> GetUserVariable(ulong guildId, ulong userId, string variable) {
+        private Maybe<string> GetUserVariable(ulong guildId, ulong userId, string variable) {
             if (variables.TryGetValue(guildId, out var guildVariablesCollection)) {
                 if (guildVariablesCollection.TryGetValue(userId, out var variablesCollection)) {
                     if (variablesCollection.TryGetValue(variable, out var value)) {
@@ -29,7 +29,7 @@ namespace DiscordBot.Database
             return new Maybe<string>();
         }
 
-        public void SetUserVariable(ulong guildId, ulong userId, string variable, string value) {
+        private void SetUserVariable(ulong guildId, ulong userId, string variable, string value) {
             if (!variables.TryGetValue(guildId, out var guildVariablesCollection)) {
                 guildVariablesCollection = new Dictionary<ulong, Dictionary<string, string>>();
                 variables.Add(guildId, guildVariablesCollection);
@@ -47,7 +47,7 @@ namespace DiscordBot.Database
             }
         }
 
-        public Maybe<string> GetGlobalVariable(ulong guildId, string variable) {
+        private Maybe<string> GetGlobalVariable(ulong guildId, string variable) {
             if (globalVariables.TryGetValue(guildId, out var guildGlobalVariables)) {
                 if (guildGlobalVariables.TryGetValue(variable, out var value)) {
                     return new Maybe<string>(value);
@@ -57,7 +57,7 @@ namespace DiscordBot.Database
             return new Maybe<string>();
         }
 
-        public void SetGlobalVariable(ulong guildId, string variable, string value) {
+        private void SetGlobalVariable(ulong guildId, string variable, string value) {
             if (!globalVariables.TryGetValue(guildId, out var guildGlobalVariables)) {
                 guildGlobalVariables = new Dictionary<string, string>();
                 globalVariables.Add(guildId, guildGlobalVariables);
@@ -75,15 +75,15 @@ namespace DiscordBot.Database
             foreach (var variableName in variableNames) {
                 var result = GetUserVariable(guildId, userId, variableName);
 
-                variableCollection.Add(variableName, new Variable(variableName, result));
+                variableCollection.AddWithoutTracking(new Variable(variableName, result));
             }
 
             return Task.FromResult(variableCollection);
         }
 
         public Task SetUserVariableSet(ulong guildId, ulong userId, VariableCollection variables) {
-            foreach (var variable in variables) {
-                SetUserVariable(guildId, userId, variable.Key, variable.Value.Value.Value);
+            foreach (var variable in variables.SubsetModified()) {
+                SetUserVariable(guildId, userId, variable.Name, variable.Value.Value);
             }
 
             return Task.CompletedTask;
@@ -94,15 +94,15 @@ namespace DiscordBot.Database
             foreach (var variableName in variableNames) {
                 var result = GetGlobalVariable(guildId, variableName);
 
-                variableCollection.Add(variableName, new Variable(variableName, result));
+                variableCollection.AddWithoutTracking(new Variable(variableName, result));
             }
 
             return Task.FromResult(variableCollection);
         }
 
         public Task SetGlobalVariableSet(ulong guildId, VariableCollection variables) {
-            foreach (var variable in variables) {
-                SetGlobalVariable(guildId, variable.Key, variable.Value.Value.Value);
+            foreach (var variable in variables.SubsetModified()) {
+                SetGlobalVariable(guildId, variable.Name, variable.Value.Value);
             }
 
             return Task.CompletedTask;
