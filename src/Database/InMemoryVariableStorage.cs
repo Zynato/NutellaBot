@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DiscordBot.Database
 {
@@ -67,6 +68,44 @@ namespace DiscordBot.Database
             } else {
                 guildGlobalVariables[variable] = value;
             }
+        }
+
+        public Task<VariableCollection> GetUserVariableSet(ulong guildId, ulong userId, params string[] variableNames) {
+            var variableCollection = new VariableCollection();
+            foreach (var variableName in variableNames) {
+                var result = GetUserVariable(guildId, userId, variableName);
+
+                variableCollection.Add(variableName, new Variable(variableName, result));
+            }
+
+            return Task.FromResult(variableCollection);
+        }
+
+        public Task SetUserVariableSet(ulong guildId, ulong userId, VariableCollection variables) {
+            foreach (var variable in variables) {
+                SetUserVariable(guildId, userId, variable.Key, variable.Value.Value.Value);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task<VariableCollection> GetGlobalVariableSet(ulong guildId, params string[] variableNames) {
+            var variableCollection = new VariableCollection();
+            foreach (var variableName in variableNames) {
+                var result = GetGlobalVariable(guildId, variableName);
+
+                variableCollection.Add(variableName, new Variable(variableName, result));
+            }
+
+            return Task.FromResult(variableCollection);
+        }
+
+        public Task SetGlobalVariableSet(ulong guildId, VariableCollection variables) {
+            foreach (var variable in variables) {
+                SetGlobalVariable(guildId, variable.Key, variable.Value.Value.Value);
+            }
+
+            return Task.CompletedTask;
         }
     }
 }
