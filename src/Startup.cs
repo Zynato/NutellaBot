@@ -21,6 +21,8 @@ namespace DiscordBot
         DiscordSocketClient client;
         CommandService commands;
 
+        CommandHandler commandHandler;
+
         public List<IExtension> Extensions { get; }
 
         public Startup() {
@@ -42,7 +44,9 @@ namespace DiscordBot
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton(client);
             serviceCollection.AddSingleton(commands);
+            serviceCollection.AddSingleton(this.configuration);
             serviceCollection.AddSingleton(new Random());
+            serviceCollection.AddSingleton<GuildPrefixManager>();
 
             serviceCollection.AddSingleton(LoadGuildMappings(configuration));
 
@@ -66,7 +70,9 @@ namespace DiscordBot
 
             services = serviceCollection.BuildServiceProvider();
 
-            client.MessageReceived += Client_MessageReceived;
+            commandHandler = new CommandHandler(client, commands, services);
+            commandHandler.StartListening();
+
             await commands.AddModulesAsync(Assembly.GetExecutingAssembly());
 
             foreach (var extension in Extensions) {
@@ -97,23 +103,6 @@ namespace DiscordBot
             }
 
             return guildMappings;
-        }
-
-        private async Task Client_MessageReceived(SocketMessage e) {
-            // https://discord.foxbot.me/docs/guides/commands/commands.html
-            var message = e as SocketUserMessage;
-            if (message == null) {
-                return;
-            }
-            int argPos = 0;
-            if (!(message.HasCharPrefix('!', ref argPos) || message.HasMentionPrefix(client.CurrentUser, ref argPos))) {
-                return;
-            }
-            var context = new SocketCommandContext(client, message);
-            var result = await commands.ExecuteAsync(context, argPos, services);
-            if (!result.IsSuccess) {
-                await context.Channel.SendMessageAsync(result.ErrorReason);
-            }
         }
 
         private IConfiguration BuildConfiguration() {

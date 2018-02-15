@@ -13,6 +13,8 @@ namespace DiscordBot.Commands
         public CommandService Commands { get; set; }
         public IServiceProvider ServiceProvider { get; set; }
 
+        public GuildPrefixManager guildPrefixManager { get; set; }
+
         public Help(IServiceProvider serviceProvider) {
             this.ServiceProvider = serviceProvider;
         }
@@ -20,6 +22,8 @@ namespace DiscordBot.Commands
         [Command("help")]
         [Summary("Print help information")]
         public async Task HelpAsync() {
+            var prefix = await guildPrefixManager.GetPrefix(Context.Guild.Id);
+
             var helpBuilder = new StringBuilder();
             helpBuilder.AppendLine("**Available commands:**");
             helpBuilder.Append("```");
@@ -31,7 +35,7 @@ namespace DiscordBot.Commands
                 foreach (var command in module.Commands) {
                     var result = await command.CheckPreconditionsAsync(Context, ServiceProvider);
                     if (result.IsSuccess) {
-                        commandsBuilder.Append("!"); // TODO: Don't hardcode the command prefix
+                        commandsBuilder.Append(prefix); 
                         if (!string.IsNullOrEmpty(moduleAlias)) {
                             commandsBuilder.Append($"{moduleAlias} ");
                         }
