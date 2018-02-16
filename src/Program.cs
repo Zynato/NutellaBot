@@ -7,6 +7,8 @@ namespace DiscordBot
     {
         public static async Task Main() {
             await new Startup().RunAsync();
+
+            await Task.Delay(-1);
         }
     }
 }

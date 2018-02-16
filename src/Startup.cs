@@ -86,9 +86,7 @@ namespace DiscordBot
             await client.LoginAsync(Discord.TokenType.Bot, token);
             await client.StartAsync();
 
-            Console.WriteLine("Bot loaded and waiting.");
-
-            await Task.Delay(-1);
+            Console.WriteLine("Bot loaded.");
         }
 
         private GuildMappingCollection LoadGuildMappings(IConfiguration configuration) {
