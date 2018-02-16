@@ -28,12 +28,12 @@ namespace DiscordBot
         public Startup() {
             this.configuration = BuildConfiguration();
             this.Extensions = new List<IExtension>();
+
+            this.client = new DiscordSocketClient();
+            this.commands = new CommandService();
         }
 
         public async Task RunAsync() {
-            client = new DiscordSocketClient();
-            commands = new CommandService();
-
             var token = this.configuration.GetSection("Discord")["Token"];
 
             if (string.IsNullOrEmpty(token)) {
