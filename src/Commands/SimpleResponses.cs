@@ -142,7 +142,7 @@ namespace DiscordBot.Commands
         [Command("bitconnect")]
         [Summary("Wassa wassaa wassuuuuppp!")]
         public async Task BitconnectAsync() {
-            var result = Random.Next(0, 4);
+            var result = Random.Next(0, 5);
             switch (result) {
                 case 0: {
                         await ReplyAsync("Heey heeey heeeeyyyyy");
@@ -162,6 +162,11 @@ namespace DiscordBot.Commands
                 case 3: {
                         await ReplyAsync("Bitconnect is in the world around me!!");
                         await ReplyAsync("https://www.youtube.com/watch?v=SerREQ93g_I");
+                    }
+                    break;
+                case 4: {
+                        await ReplyAsync("Friendship is magic!");
+                        await ReplyAsync("https://www.youtube.com/watch?v=ZcBNxuKZyN4");
                     }
                     break;
             }
