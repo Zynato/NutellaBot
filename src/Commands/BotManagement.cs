@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using DiscordBot.Preconditions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace DiscordBot.Commands
 {
-    [Name("bot")]
-    [RequireOwner]
+    [Group("bot")]
+    [RequireGuildOwner]
     public class BotManagement : ModuleBase<SocketCommandContext>
     {
         public GuildPrefixManager GuildPrefixManager { get; set; }
