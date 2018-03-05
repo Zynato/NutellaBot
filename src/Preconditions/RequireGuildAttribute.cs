@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 
-namespace DiscordBot
+namespace DiscordBot.Preconditions
 {
     public class RequireGuildAttribute : PreconditionAttribute
     {
