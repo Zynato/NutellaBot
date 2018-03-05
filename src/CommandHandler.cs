@@ -35,16 +35,27 @@ namespace DiscordBot
             var prefixManager = this.services.GetService<GuildPrefixManager>();
             var context = new SocketCommandContext(discordClient, message);
 
-            var botPrefix = await prefixManager.GetPrefix(context.Guild.Id);
-
+            bool canActivate = false;
             int argPos = 0;
-            if (!(message.HasStringPrefix(botPrefix, ref argPos) || message.HasMentionPrefix(discordClient.CurrentUser, ref argPos))) {
-                return;
+
+            if (context.IsPrivate) {
+                // Make sure we aren't replying to our own messages...
+                if (context.User.Id != discordClient.CurrentUser.Id) {
+                    canActivate = true;
+                }
+            } else if (context.Guild != null) {
+                var botPrefix = await prefixManager.GetPrefix(context.Guild.Id);
+
+                if (message.HasStringPrefix(botPrefix, ref argPos) || message.HasMentionPrefix(discordClient.CurrentUser, ref argPos)) {
+                    canActivate = true;
+                }
             }
 
-            var result = await commands.ExecuteAsync(context, argPos, services);
-            if (!result.IsSuccess) {
-                await context.Channel.SendMessageAsync(result.ErrorReason);
+            if (canActivate) {
+                var result = await commands.ExecuteAsync(context, argPos, services);
+                if (!result.IsSuccess) {
+                    await context.Channel.SendMessageAsync(result.ErrorReason);
+                }
             }
         }
     }
